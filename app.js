@@ -4,7 +4,8 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const path = require ('path');
-const cherrio = require('cherrio');
+const cheerio = require('cheerio');
+const request = require('request');
 
 app.engine('.hbs', handlebars({
     extname: '.hbs',
@@ -20,15 +21,42 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', '.hbs');
 
 app.get('/', function (req, res) {
-    let url = `https://indreed.herokuapp.com/api/jobs?q=web+developer&limit=50`;
+    let url = `https://drudgereport.com`;
     axios({
         method: 'get',
         url
     })
     .then(function (response) {
+        const $ = cheerio.load(response.data);
+        let jobs = {$};
+        $("<div>").each(function (i, element){
+            let head = $(this)
+            .children('font')
+            .children('center')
+            .children('table')
+            .children('tbody')
+            .children('tr')
+            .children('td')
+            .children('tt')
+            .children('b')
+            .text('a')
+            console.log(this);
 
-        let jobs = response.data;
+            var hyperlink = $(this)
+                .children('font')
+                .children('center')
+                .children('table')
+                .children('tbody')
+                .children('tr')
+                .children('td')
+                .children('tt')
+                .children('b')
+                .text('a')
+            console.log(hyperlink, response.data);
+        })
+        // let jobs = [response.data];
         res.render('index', { title:'Scrapy Scraper', jobs: response.data });
+        
         console.log(jobs);
     })
     .catch(function(err){
