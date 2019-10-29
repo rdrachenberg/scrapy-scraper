@@ -6,6 +6,8 @@ const PORT = process.env.PORT || 3000;
 const path = require ('path');
 const cheerio = require('cheerio');
 const request = require('request');
+const bodyParser = require('body-parser');
+
 
 app.engine('.hbs', handlebars({
     extname: '.hbs',
@@ -20,6 +22,10 @@ app.set('views', path.join(__dirname, 'views'));
 
 app.set('view engine', '.hbs');
 
+//// user body parser 
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
 app.get('/', function (req, res) {
     let url = `https://drudgereport.com`;
     axios({
@@ -28,36 +34,28 @@ app.get('/', function (req, res) {
     })
     .then(function (response) {
         const $ = cheerio.load(response.data);
-        let jobs = {$};
-        $("<div>").each(function (i, element){
+        let data = [];
+        $('table, tbody, tr, td, tt, b, a').each(function (i, element) {
             let head = $(this)
-            .children('font')
-            .children('center')
-            .children('table')
-            .children('tbody')
-            .children('tr')
-            .children('td')
-            .children('tt')
-            .children('b')
-            .text('a')
-            console.log(this);
+            .children('a')
+            .text()
+            .trim()
 
-            var hyperlink = $(this)
-                .children('font')
-                .children('center')
-                .children('table')
-                .children('tbody')
-                .children('tr')
-                .children('td')
-                .children('tt')
-                .children('b')
-                .text('a')
-            console.log(hyperlink, response.data);
+            console.log(head);
+
+            let hyperlink = $(this)
+                .children('A')
+                .attr('href')
+                
+                // console.log(hyperlink);
+            
+            
         })
-        // let jobs = [response.data];
-        res.render('index', { title:'Scrapy Scraper', jobs: response.data });
         
-        console.log(jobs);
+        res.render('index', { title:'Scrapy Scraper', data: data });
+        
+        // let jobs = [$];
+        // console.log(jobs);
     })
     .catch(function(err){
         console.log(err);
