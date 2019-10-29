@@ -35,19 +35,25 @@ app.get('/', function (req, res) {
     .then(function (response) {
         const $ = cheerio.load(response.data);
         let data = [];
-        $('table, tbody, tr, td, tt, b, a').each(function (i, element) {
+        $('a').each(function (i, element) {
             let head = $(this)
-            .children('a')
             .text()
-            .trim()
+            .trim();
 
-            console.log(head);
+            let hyperLink = $(this)
+            .attr('href');
 
-            let hyperlink = $(this)
-                .children('A')
-                .attr('href')
+            let headNeat = head.replace(/(\r\n|\n|\r|\t|\s+)/gm, " ").trim();
+            let hyperLinkNeat = hyperLink.replace(/(\r\n|\n|\r|\t|\s+)/gm, " ").trim();
+
+            let dataToPush = {
+                head: headNeat,
+                hyperLink: hyperLinkNeat
+            }
+
+            data.push(dataToPush);
                 
-                // console.log(hyperlink);
+            console.log(data);
             
             
         })
