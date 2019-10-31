@@ -24,6 +24,7 @@ app.set('view engine', '.hbs');
 
 //// user body parser 
 app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(bodyParser.json());
 
 app.get('/', function (req, res) {
@@ -43,28 +44,32 @@ app.get('/', function (req, res) {
             let hyperLink = $(this)
             .attr('href');
 
+            let img = $('a.find')
+            .children('img')
+            .attr('src');
+
             let headNeat = head.replace(/(\r\n|\n|\r|\t|\s+)/gm, " ").trim();
             let hyperLinkNeat = hyperLink.replace(/(\r\n|\n|\r|\t|\s+)/gm, " ").trim();
 
             let dataToPush = {
                 head: headNeat,
-                hyperLink: hyperLinkNeat
+                hyperLink: hyperLinkNeat,
+                img: img
             }
 
             data.push(dataToPush);
                 
-            console.log(data);
-            
-            
+            console.log(img);
+
         })
-        
+
         res.render('index', { title:'Scrapy Scraper', data: data });
-        
-        // let jobs = [$];
-        // console.log(jobs);
+
     })
     .catch(function(err){
+
         console.log(err);
+
     });
     
 });
