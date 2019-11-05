@@ -27,6 +27,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(bodyParser.json());
 
+let refresh = setInterval(function(){ console.log('Hello KatDrac... Oi!'); }, 2000)
+
 app.get('/', function (req, res) {
     let url = `https://drudgereport.com`;
     axios({
@@ -35,7 +37,7 @@ app.get('/', function (req, res) {
     })
     .then(function (response) {
         const $ = cheerio.load(response.data);
-        let data = [];
+        let data = [];``
         $('a').each(function (i, element) {
             let head = $(this)
             .text()
@@ -44,7 +46,7 @@ app.get('/', function (req, res) {
             let hyperLink = $(this)
             .attr('href');
 
-            let img = $('a.find')
+            let img = $(this)
             .children('img')
             .attr('src');
 
@@ -58,7 +60,7 @@ app.get('/', function (req, res) {
             }
 
             data.push(dataToPush);
-                
+            refresh();
             console.log(img);
 
         })
