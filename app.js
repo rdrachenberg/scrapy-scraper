@@ -27,54 +27,54 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(bodyParser.json());
 
-let refresh = setInterval(function(){ console.log('Hello KatDrac... Oi!'); }, 2000)
+let refresh = setInterval(function(){ 
 
-app.get('/', function (req, res) {
-    let url = `https://drudgereport.com`;
-    axios({
-        method: 'get',
-        url
-    })
-    .then(function (response) {
-        const $ = cheerio.load(response.data);
-        let data = [];``
-        $('a').each(function (i, element) {
-            let head = $(this)
-            .text()
-            .trim();
+    app.get('/', function (req, res) {
+        let url = `https://drudgereport.com`;
+        axios({
+            method: 'get',
+            url
+        })
+        .then(function (response) {
+            const $ = cheerio.load(response.data);
+            let data = [];``
+            $('a').each(function (i, element) {
+                let head = $(this)
+                .text()
+                .trim();
 
-            let hyperLink = $(this)
-            .attr('href');
+                let hyperLink = $(this)
+                .attr('href');
 
-            let img = $(this)
-            .children('img')
-            .attr('src');
+                let img = $(this)
+                .children('img')
+                .attr('src');
 
-            let headNeat = head.replace(/(\r\n|\n|\r|\t|\s+)/gm, " ").trim();
-            let hyperLinkNeat = hyperLink.replace(/(\r\n|\n|\r|\t|\s+)/gm, " ").trim();
+                let headNeat = head.replace(/(\r\n|\n|\r|\t|\s+)/gm, " ").trim();
+                let hyperLinkNeat = hyperLink.replace(/(\r\n|\n|\r|\t|\s+)/gm, " ").trim();
 
-            let dataToPush = {
-                head: headNeat,
-                hyperLink: hyperLinkNeat,
-                img: img
-            }
+                let dataToPush = {
+                    head: headNeat,
+                    hyperLink: hyperLinkNeat,
+                    img: img
+                }
 
-            data.push(dataToPush);
-            refresh();
-            console.log(img);
+                data.push(dataToPush);
+                console.log(img);
+
+            })
+
+            res.render('index', { title:'Scrapy Scraper', data: data });
 
         })
+        .catch(function(err){
 
-        res.render('index', { title:'Scrapy Scraper', data: data });
+            console.log(err);
 
-    })
-    .catch(function(err){
-
-        console.log(err);
-
+        });
+        
     });
-    
-});
+console.log('refreshed'); }, 10000)
 
 app.listen(app.get('PORT'), function () {
     console.log('Server started on PORT ' + 
